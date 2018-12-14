@@ -109,5 +109,10 @@ ws.addEventListener("message", function (event) {
         case "loss":
             alert("Game over. You lose.");
             break;
+        case "error":
+            alert("ERROR: " + data.error);
+            break;
+        default:
+            console.log("UNKNOWN RESPONSE: " + event.data);
     }
 });
