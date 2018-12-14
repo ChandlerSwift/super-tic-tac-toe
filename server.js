@@ -7,7 +7,10 @@ const Board = require ('./Board');
 const app = express()
 const port = 12075;
 
-const server = http.createServer(app);
+app.use('/static', express.static(path.join(__dirname, 'static')))
+app.get('/', (req, res) => res.sendFile('index.html', {root: __dirname}))
+
+const server = app.listen(port, () => console.log(`Listening on port ${port}!`));
 
 const wss = new WebSocket.Server({ server });
 // TODO: ping/pong as https://github.com/websockets/ws#how-to-detect-and-close-broken-connections
@@ -155,8 +158,3 @@ wss.on('connection', function connection(ws, req) {
   });
 
 });
-
-app.use('/static', express.static(path.join(__dirname, 'static')))
-app.get('/', (req, res) => res.sendFile('index.html', {root: __dirname}))
-
-app.listen(port, () => console.log(`Listening on port ${port}!`))
