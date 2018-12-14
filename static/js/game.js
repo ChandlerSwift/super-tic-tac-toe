@@ -24,6 +24,8 @@ document.getElementById("new-game").onclick = function() {
     document.getElementById("new-game").disabled = true;
     document.getElementById("join-game").disabled = true;
 
+    document.getElementById('game-info').innerHTML = "Your token is <b>X</b>";
+
     // 2. Request new game `{"cmd": "new_game"}`
     ws.send('{"cmd": "new_game"}');
 
@@ -33,6 +35,8 @@ document.getElementById("new-game").onclick = function() {
 document.getElementById("join-game").onclick = function() {
     document.getElementById("new-game").disabled = true;
     document.getElementById("join-game").disabled = true;
+
+    document.getElementById('game-info').innerHTML = "Your token is <b>O</b>";
 
     ws.send(`{"cmd": "join_game", "game_code": "${prompt("Game Code:")}"}`);
 }
