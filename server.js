@@ -24,7 +24,7 @@ function Player() {
 function makeid() {
   // TODO: determine appropriate length
   let text = "";
-  let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let possible = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
 
   for (let i = 0; i < 3; i++) {
     for (let j = 0; j < 3; j++) {
