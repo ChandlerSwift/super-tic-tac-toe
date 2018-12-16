@@ -70,12 +70,13 @@ module.exports = class Board {
     move(subboard, spot, token) {
         if (token != "x" && token != "o") // TODO: better tokens?
             throw `Invalid token "${token}"`;
-        let dest_board = this.moves[this.moves.length - 1][1];
-        if (this.moves.length > 0 && // not the first move
-            subboard !== dest_board && // not the same as previous
-            this.subboards[dest_board].winner === null &&
-            !this.subboards[dest_board].isFull)
-            throw `Invalid subboard. You should be moving in subboard ${this.moves[this.moves.length - 1][1]}`;
+        if (this.moves.length > 0) {
+            let dest_board = this.moves[this.moves.length - 1][1];
+            if (subboard != dest_board && // not the same as previous
+                this.subboards[dest_board].winner === null &&
+                !this.subboards[dest_board].isFull)
+                throw `Invalid subboard. You should be moving in subboard ${this.moves[this.moves.length - 1][1]}`;
+        }
         this.subboards[subboard].move(spot, token);
         this.moves.push([subboard, spot]);
         this.checkForWinner();
