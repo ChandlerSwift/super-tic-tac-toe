@@ -15,7 +15,7 @@ const server = app.listen(port, () => console.log(`Listening on port ${port}!`))
 const wss = new WebSocket.Server({ server });
 // TODO: ping/pong as https://github.com/websockets/ws#how-to-detect-and-close-broken-connections
 
-// TODO
+// TODO: implement player struct to manage names, win/loss, chat, and user-management server-side
 function Player() {
   let name = "";
   let sock = null;
@@ -45,7 +45,7 @@ class Game {
     this.turn = null;
     this.board = new Board();
   }
-  
+
   getOtherPlayer(player) {
     if (this.players.length !== 2) {
       console.log('length is not 2');
@@ -127,33 +127,34 @@ wss.on('connection', function connection(ws, req) {
         let subboard = parseInt(data.location[0]);
         let spot = parseInt(data.location[2]);
         if (!valid.includes(subboard) || !valid.includes(spot)) {
-          sendError(ws, "Move not valid. Please try again.");
+          sendError(ws, "Move not valid.");
           break;
         } else if (ws.game.turn != ws) {
           sendError(ws, "It's not your turn!");
         } else {
           try {
             ws.game.board.move(subboard, spot, ws.token);
+
+            if (ws.game.board.winner !== null) {
+              // Send end-game messages
+              ws.send('{"response": "win"}');
+              ws.game.getOtherPlayer().send('{"response": "loss"}');
+            } else {
+              // Pass turn
+              ws.game.turn = ws.game.getOtherPlayer(ws);
+              sendState(ws.game.getOtherPlayer(ws));
+              sendState(ws);
+            }
           } catch (e) {
             sendError(ws, e);
+            sendState(ws);
           }
         }
-
-        if (ws.game.board.winner !== null) { // TODO
-          let res = {};
-          res.response = "";
-          res.error = str;
-          ws.send(JSON.stringify(res));
-        }
-        // pass turn to other player
-        ws.game.turn = ws.game.getOtherPlayer(ws);
-        sendState(ws.game.getOtherPlayer(ws));
-        sendState(ws);
-
-        console.log(ws.game.board.state);
         break;
+
       default:
         console.log("Unknown Response: " + data.response);
+        sendError(ws, "Unknown command. If you're not a developer, you can safely ignore this.")
     }
   });
 

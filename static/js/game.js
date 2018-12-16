@@ -15,7 +15,7 @@ LOOP:
 
 // 1. Connect to websocket server
 // TODO: autoreconnect on lost connection
-const ws = new WebSocket("ws://localhost:12075");
+const ws = new WebSocket(`ws://${window.location.hostname}:12075`);
 ws.addEventListener("open", function (event) {
     console.log("Websocket Connection Successful!");
 });
@@ -45,8 +45,7 @@ function updateBoard(state, last_move, your_turn) {
     document.getElementById('game-input-submit').disabled = !your_turn;
     document.getElementById('game-input').disabled = !your_turn;
     // TODO: highlight cell
-    console.log(state);
-    console.log(state.length);
+    // TODO: Implement dynamic method (canvas, perhaps?) that also supports drawing win lines
     document.getElementById("game-board").innerHTML = 
     `<div>${your_turn ? "Your turn" : "their turn" }<pre>
     ${state.charAt(0)}│${state.charAt(1)}│${state.charAt(2)} ┃ ${state.charAt(9)}│${state.charAt(10)}│${state.charAt(11)} ┃ ${state.charAt(18)}│${state.charAt(19)}│${state.charAt(20)}

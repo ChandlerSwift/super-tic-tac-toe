@@ -1,3 +1,7 @@
+// This file is a javascript port of https://github.com/smit8397/super-tic-tac-toe/blob/master/game.py
+// It functions fundamentally the same, but has some extra error checking and other functionality built in.
+// It is intended to conform to the description at https://en.wikipedia.org/wiki/Ultimate_tic-tac-toe
+
 let winning_combos = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
 
 String.prototype.replaceAt=function(index, replacement) {
@@ -15,7 +19,9 @@ class SubBoard {
 
     move(spot, token) {
         if (this.winner !== null)
-            throw "Error: Grid is already won";
+            throw 'Grid is already won';
+        if (this.state[spot] !== ' ')
+            throw 'Space is already taken';
         this.state = this.state.replaceAt(spot, token);
         this.checkForWinner();
     }
@@ -30,8 +36,8 @@ class SubBoard {
         }
     }
 
-    getState() {
-        return this.state;
+    get isFull() {
+        return this.state.indexOf(' ') < 0;
     }
 }
 
@@ -47,7 +53,7 @@ module.exports = class Board {
     get state() {
         let s = "";
         for (let subboard of this.subboards)
-            s += subboard.getState();
+            s += subboard.state;
         return s;
     }
 
@@ -62,8 +68,14 @@ module.exports = class Board {
     }
 
     move(subboard, spot, token) {
-        if (token != "x" && token != "o")
-            throw `Error: invalid token "${token}"`;
+        if (token != "x" && token != "o") // TODO: better tokens?
+            throw `Invalid token "${token}"`;
+        let dest_board = this.moves[this.moves.length - 1][1];
+        if (this.moves.length > 0 && // not the first move
+            subboard !== dest_board && // not the same as previous
+            this.subboards[dest_board].winner === null &&
+            !this.subboards[dest_board].isFull)
+            throw `Invalid subboard. You should be moving in subboard ${this.moves[this.moves.length - 1][1]}`;
         this.subboards[subboard].move(spot, token);
         this.moves.push([subboard, spot]);
         this.checkForWinner();
