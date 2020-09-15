@@ -95,6 +95,9 @@ ws.addEventListener("message", function (event) {
         case "state":
             updateBoard(data.state, data.last_move, data.your_turn);
             if (data.your_turn) {
+                if (data.last_move) {
+                   alert(`Opponent played ${data.last_move}`);
+                }
                 // takeTurn();
             }
             break;
